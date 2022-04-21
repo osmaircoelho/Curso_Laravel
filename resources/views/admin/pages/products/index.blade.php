@@ -1,30 +1,41 @@
-@extends('admin.layouts.app')
+@extends('layouts.app')
 
 @section('title', 'Gestao de Produtos')
 
 @section('content')
 
-<h1>Components</h1>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <h1>Gestao de Produtos</h1>
+                <a href="{{ route('products.create') }}" class="btn btn-primary">Novo Produto</a>
 
-    @component('admin.components.card', ['title' => 'Card Title', 'subtitle' => 'Card Subtitle'])
-        Um card de exemplo
-    @endcomponent
+                <hr>
 
-    <hr>
-    <h1>Exibindo produtos</h1>
+                <h1>Components</h1>
 
-    @if(isset($products))
-        @foreach($products as $product)
+                @component('admin.components.card', ['title' => 'Card Title', 'subtitle' => 'Card Subtitle'])
+                    Um card de exemplo
+                @endcomponent
 
-            <p class="@if ($loop->last) red @endif">  {{ $product }}</p>
-        @endforeach
-    @endif
+                <hr>
+                <h1>Exibindo produtos</h1>
 
-    <hr>
+                @if(isset($products))
+                    @foreach($products as $product)
+
+                        <p class="@if ($loop->last) bg-danger @endif">  {{ $product }}</p>
+                    @endforeach
+                @endif
+
+                <hr>
+            </div>
+        </div>
+    </div>
 @endsection
 @push('styles')
     <style>
-        .red{
+        .red {
             color: red;
             font-weight: bold;
         }

@@ -1,14 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'Create new Product')
+@section('title', 'Editing new Product')
 
 @section('content')
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <h1>Create new Product</h1>
+                <h1>Editing Product {{ $id }}</h1>
 
-                <form action="{{ route('products.create') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('products.update', $id) }}" method="POST" enctype="multipart/form-data">
+                    @method('PUT')
                     @csrf
                     <div class="form-group">
                         <label for="name">Name</label>
@@ -45,9 +46,9 @@
                     <div class="form-group">
                         <label for="category_id">Category</label>
                         <select class="form-control" id="category_id" name="category_id" required>
-                              @foreach ($categories as $category)
-                                  <option value="{{ $category['id'] }}">{{ $category['name'] }}</option>
-                              @endforeach
+                            @foreach ($categories as $category)
+                                <option value="{{ $category['id'] }}">{{ $category['name'] }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="form-group mt-3">
@@ -55,6 +56,8 @@
                             <button type="submit" class="btn btn-primary form-control">Create</button>
                         </div>
                     </div>
+
+
                 </form>
             </div>
         </div>
