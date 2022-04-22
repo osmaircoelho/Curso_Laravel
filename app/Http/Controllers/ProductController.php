@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUpdateProductRequest;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -34,15 +36,10 @@ class ProductController extends Controller
 
     public function index()
     {
-        /*$arr_products = ['Product1','Product2','Product3' ];
-        return $arr_products;*/
+        $products = Product::paginate(10);
+        $totalproducts = count( Product::all() );
 
-        $test = 123;
-        $test2 = 321;
-        $test3 = [1, 2, 3, 4, 5];
-        $products = ['TV', 'Notebook', 'Tablet', 'Celular'];
-
-        return view('admin.pages.products.index', compact('test', 'test2', 'test3', 'products'));
+        return view('admin.pages.products.index', compact('products', 'totalproducts'));
     }
 
     public function create()
@@ -52,14 +49,37 @@ class ProductController extends Controller
         return view('admin.pages.products.create', compact('categories'));
     }
 
-    public function store(Request $request)
+    public function store(StoreUpdateProductRequest $request)
     {
-        //return view('admin.pages.products.edit', compact('id'));
+       /* $request->validate([
+            'name' => 'required|min:3|max:255',
+            'description' => 'required|min:3|max:255',
+            'price' => 'required|numeric',
+            'category_id' => 'required|numeric',
+            'image' => 'required|image'
+        ]);*/
+
+        /*dd($request->only(['name', 'description']));
+        dd($request->name();
+        dd($request->input('teste','default');
+        dd($request->except('_token', 'name'));*/
+
+        if($request->file('image')){
+            $image = $request->file('image');
+            $name = time().'.'.$image->getClientOriginalExtension();
+            //$destinationPath = public_path('/images');
+           // $image->move($destinationPath, $name);
+            $image->storeAs('products', $name);
+            print "<img class='small' heigth='300' width='300' src=".env('APP_URL').'/storage/products/'.$name.">";
+        }else{
+            dd('Nenhuma imagem foi selecionada');
+        }
+
     }
 
-    public function show($id)
+    public function show(Product $product)
     {
-        return "Showing ... {$id}";
+        return view('admin.pages.products.show', compact('product'));
     }
 
     public function edit($id)
@@ -73,8 +93,9 @@ class ProductController extends Controller
         dd("Updating...", $id);
     }
 
-    public function destroy($id)
+    public function destroy(Product $product)
     {
-        dd("Destroing...");
+        $product->delete();
+        return redirect()->route('products.index');
     }
 }
