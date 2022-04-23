@@ -6,7 +6,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-12">
-                <h2 class="mb-5">Dados do produto</h2>
+                <h2 class="mb-1">Dados do produto</h2>
                 <table class="table table-hover">
                     <tbody>
 
@@ -33,10 +33,20 @@
                     </tr>
                     <tr>
                         <th scope="row">Imagem</th>
-                        <td>{{ $product->image  }}</td>
+
                     </tr>
-
-
+                    <tr>
+                        <td>
+                            @if($product->image)
+                                <img src="{{ url("storage/{$product->image}") }}" alt="{{ $product->name }}"
+                                     style="max-width: 300px;">
+                        </td>
+                            @else
+                         <td>
+                                Nenhuma imagem cadastrada
+                        </td>
+                            @endif
+                    </tr>
                     </tbody>
                 </table>
             </div>

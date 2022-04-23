@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUpdateProductRequest;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
 
     protected $request;
-    CONST CATEGORIES = [
+    const CATEGORIES = [
         ['id' => '1', 'name' => 'Electronics'],
         ['id' => '2', 'name' => 'Books'],
         ['id' => '3', 'name' => 'Clothes'],
@@ -37,43 +38,28 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::paginate(10);
-        $totalproducts = count( Product::all() );
+        $totalproducts = count(Product::all());
 
         return view('admin.pages.products.index', compact('products', 'totalproducts'));
     }
 
     public function create()
     {
-        $categories = self::CATEGORIES;
-
-        return view('admin.pages.products.create', compact('categories'));
+        return view('admin.pages.products.create');
     }
 
     public function store(StoreUpdateProductRequest $request)
     {
-       /* $request->validate([
-            'name' => 'required|min:3|max:255',
-            'description' => 'required|min:3|max:255',
-            'price' => 'required|numeric',
-            'category_id' => 'required|numeric',
-            'image' => 'required|image'
-        ]);*/
+        $data = $request->only('name', 'description', 'price', 'long_description');
 
-        /*dd($request->only(['name', 'description']));
-        dd($request->name();
-        dd($request->input('teste','default');
-        dd($request->except('_token', 'name'));*/
+        if ($request->hasFile('image') && $request->image->isValid()) {
+            $imagePath = $request->image->store('products');
 
-        if($request->file('image')){
-            $image = $request->file('image');
-            $name = time().'.'.$image->getClientOriginalExtension();
-            //$destinationPath = public_path('/images');
-           // $image->move($destinationPath, $name);
-            $image->storeAs('products', $name);
-            print "<img class='small' heigth='300' width='300' src=".env('APP_URL').'/storage/products/'.$name.">";
-        }else{
-            dd('Nenhuma imagem foi selecionada');
+            $data['image'] = $imagePath;
         }
+
+        Product::create($data);
+        return redirect()->route('products.index');
 
     }
 
@@ -82,20 +68,43 @@ class ProductController extends Controller
         return view('admin.pages.products.show', compact('product'));
     }
 
-    public function edit($id)
+    public function edit(Product $product)
     {
-        $categories = self::CATEGORIES;
-        return view('admin.pages.products.edit', compact('id', 'categories'));
+        return view('admin.pages.products.edit', compact('product'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Product $product)
     {
-        dd("Updating...", $id);
+        $data = $request->all();
+
+        if ($request->hasFile('image') && $request->image->isValid()) {
+            if ($product->image && Storage::exists($product->image)) {
+                Storage::delete($product->image);
+            }
+            $imagePath = $request->image->store('products');
+            $data['image'] = $imagePath;
+        }
+        $product->update($data);
+        return redirect()->route('products.index');
     }
 
     public function destroy(Product $product)
     {
+        if ($product->image && Storage::exists($product->image)) {
+            Storage::delete($product->image);
+        }
+
         $product->delete();
         return redirect()->route('products.index');
+    }
+
+    public function search(Request $request)
+    {
+        $filters = $request->except('_token');
+
+        $products = Product::search($request->search)->paginate(10);
+        $totalproducts = count(Product::all());
+        return view('admin.pages.products.index', compact('products', 'totalproducts', 'filters'));
+
     }
 }

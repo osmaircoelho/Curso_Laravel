@@ -4,16 +4,21 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Admin\TesteController;
 
+Auth::routes(['register' => false]);
+
+/*Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');*/
+
+Route::any('products/search', function() {
+
+    return \App::call('App\Http\Controllers\ProductController@search');
+
+})->name('products.search')->middleware('auth');
+
+Route::resource('products', ProductController::class)->middleware('auth');;
 
 Route::get('/', function () {
     return view('welcome');
 });
-
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-Route::resource('products', ProductController::class);
 
 /*Route::get("/products/{id}", 'ProductController@show')->name('products.show');
 Route::get("/products", 'ProductController@index')->name('products.index');*/

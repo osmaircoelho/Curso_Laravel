@@ -8,9 +8,10 @@
         "production": "npx mix -p"
     },
     "devDependencies": {
-        "@popperjs/core": "^2.10.2",
+        "@popperjs/core": "^2.11.5",
         "axios": "^0.19",
         "bootstrap": "^5.1.3",
+        "bootstrap-icons": "^1.8.1",
         "cross-env": "^7.0",
         "laravel-mix": "^6.0.43",
         "lodash": "^4.17.19",

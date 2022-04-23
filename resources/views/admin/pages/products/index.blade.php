@@ -8,9 +8,10 @@
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <div class="row">
-                    <div class="col">
-                        <h2>Gestao de produtos <a href="{{route('products.create')}}" class="btn btn-sm btn-primary">Novo
-                                Produto</a></h2>
+
+                    <div class="col-md-6">
+                        <h3>Gestao de produtos <a href="{{route('products.create')}}" class="btn btn-sm btn-primary">Novo
+                                Produto</a></h3>
                     </div>
 
                     <div class="col-md-3">
@@ -18,43 +19,67 @@
                     </div>
 
                     <div class="col-md-3">
-                        {{ $products->links('pagination::bootstrap-4') }}
+                        @if(isset($filters))
+                            {{ $products->appends($filters)->links('pagination::bootstrap-4') }}
+                        @else
+                            {{ $products->links('pagination::bootstrap-4') }}
+                        @endif
                     </div>
                 </div>
 
-
-                <table class="table table-hover">
+                <div class="row">
+                    <div class="col-md-10">
+                        <form action="{{ route('products.search') }}" method="POST" class="navbar-search pull-left">
+                            @csrf
+                            <input type="text" name="search" placeholder="Filtrar..." class="search-query"
+                                   value="{{ $filters['search'] ?? ""}}">
+                            <button type="submit" class="btn btn-sm btn-primary">Pesquisar</button>
+                        </form>
+                    </div>
+                </div>
+                <table class="table table-hover ">
                     <thead>
                     <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Nome</th>
-                        <th scope="col">Descrição</th>
-                        <th scope="col">Preço</th>
-                        <th scope="col">Descrição Longa</th>
-                        <th scope="col">Imagem</th>
-                        <th scope="col">Ações</th>
+                        <th >Imagem</th>
+                        <th >#</th>
+                        <th >Nome</th>
+                        <th >Descrição</th>
+                        <th >Preço</th>
+                        <th >Descrição Longa</th>
+                        <th >Ações</th>
                     </tr>
                     </thead>
                     <tbody>
                     @foreach($products as $product)
                         <tr>
                             <th scope="row">{{ $product->id }}</th>
+                            <td>
+                                @if($product->image)
+                                    <img src="{{ url("storage/{$product->image}") }}" alt="{{ $product->name }}"
+                                         style="max-width: 100px;">
+                                @endif
+
+                            </td>
                             <td>{{ $product->name }}</td>
                             <td>{{ $product->description }}</td>
                             <td>{{ $product->price }}</td>
                             <td>{{ $product->long_description }}</td>
-                            <td>{{ $product->image }}</td>
                             <td>
                                 <a href="{{ route('products.show', ['product' => $product->id] ) }}"
-                                   class="btn btn-sm btn-primary  m-1">Ver</a>
+                                   class="btn btn-sm btn-success m-1"><i class="bi bi-eye-fill"></i></a>
+
                                 <a href="{{ route('products.edit', ['product' => $product->id] ) }}"
-                                   class="btn btn-sm btn-primary m-1">Editar</a>
-                                <form style="display: inline"
+                                   class="btn btn-sm btn-primary m-1 mb-2">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+
+                                <form class="m-1"
+                                      style="display: inline"
                                       action="{{ route('products.destroy', ['product' => $product->id] ) }}"
                                       method="post">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                    <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash-fill"></i></button>
                                 </form>
                             </td>
                         </tr>
@@ -65,7 +90,11 @@
             <div class="col-md-12">
                 <div class="row">
                     <div class="container pagination justify-content-center">
-                        {{ $products->links('pagination::bootstrap-4') }}
+                        @if(isset($filters))
+                            {{ $products->appends($filters)->links('pagination::bootstrap-4') }}
+                        @else
+                            {{ $products->links('pagination::bootstrap-4') }}
+                        @endif
                     </div>
                 </div>
             </div>
