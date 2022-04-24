@@ -52,7 +52,6 @@
                     <tbody>
                     @foreach($products as $product)
                         <tr>
-                            <th scope="row">{{ $product->id }}</th>
                             <td>
                                 @if($product->image)
                                     <img src="{{ url("storage/{$product->image}") }}" alt="{{ $product->name }}"
@@ -60,13 +59,15 @@
                                 @endif
 
                             </td>
+                            <th scope="row">{{ $product->id }}</th>
                             <td>{{ $product->name }}</td>
                             <td>{{ $product->description }}</td>
                             <td>{{ $product->price }}</td>
                             <td>{{ $product->long_description }}</td>
                             <td>
                                 <a href="{{ route('products.show', ['product' => $product->id] ) }}"
-                                   class="btn btn-sm btn-success m-1"><i class="bi bi-eye-fill"></i></a>
+                                   class="btn btn-sm btn-success m-1"><i class="bi bi-eye-fill"></i>
+                                </a>
 
                                 <a href="{{ route('products.edit', ['product' => $product->id] ) }}"
                                    class="btn btn-sm btn-primary m-1 mb-2">
@@ -102,10 +103,5 @@
     </div>
 @endsection
 @push('styles')
-    <style>
-        .red {
-            color: red;
-            font-weight: bold;
-        }
-    </style>
+
 @endpush
